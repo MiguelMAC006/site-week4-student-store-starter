@@ -1,0 +1,77 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "College Hoodie",
+        "category": "Apparel",
+        "image_url": "https://tinyurl.com/college-hoodie",
+        "description": "Comfortable and stylish hoodie with the college logo.",
+        "price": 29.99
+      },
+      {
+        "id": 2,
+        "name": "Algebra Textbook",
+        "category": "Books",
+        "image_url": "https://tinyurl.com/algebra-book",
+        "description": "Comprehensive textbook covering all aspects of algebra.",
+        "price": 59.99
+      },
+      {
+        "id": 3,
+        "name": "College Notebook",
+        "category": "Supplies",
+        "image_url": "https://tinyurl.com/college-notebook",
+        "description": "Durable notebook with college branding, perfect for note-taking.",
+        "price": 6.99
+      },
+      {
+        "id": 4,
+        "name": "College Pen",
+        "category": "Supplies",
+        "image_url": "https://tinyurl.com/college-pen",
+        "description": "Smooth-writing pen with college logo, ideal for writing and exams.",
+        "price": 1.99
+      },
+      {
+        "id": 5,
+        "name": "College Mug",
+        "category": "Accessories",
+        "image_url": "https://tinyurl.com/college-mug",
+        "description": "Ceramic mug with college emblem, perfect for coffee or tea.",
+        "price": 9.99
+      },
+      {
+        "id": 6,
+        "name": "College Beanie",
+        "category": "Apparel",
+        "image_url": "https://tinyurl.com/college-beanie",
+        "description": "Warm and cozy beanie with the college logo, perfect for cold weather.",
+        "price": 14.99
+      },
+      {
+        "id": 7,
+        "name": "Energy Drink",
+        "category": "Snacks",
+        "image_url": "https://tinyurl.com/cp-energy-drink",
+        "description": "Refreshing energy drink to keep you focused during long study sessions.",
+        "price": 2.99
+      },
+      {
+        "id": 8,
+        "name": "Chocolate Bar",
+        "category": "Snacks",
+        "image_url": "https://tinyurl.com/cp-chocolate-bar",
+        "description": "Delicious chocolate bar for a quick snack between classes.",
+        "price": 1.49
+      },
+      {
+        "id": 9,
+        "name": "Granola Bar",
+        "category": "Snacks",
+        "image_url": "https://tinyurl.com/cp-granola-bar",
+        "description": "Healthy granola bar, perfect for a quick energy boost.",
+        "price": 1.29
+      }
+    ]
+  }
+  

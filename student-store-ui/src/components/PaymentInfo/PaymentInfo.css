@@ -1,0 +1,47 @@
+.PaymentInfo {
+  padding: 16px;
+}
+.PaymentInfo > h3 {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.PaymentInfo > h3 > span {
+  margin-left: 10px;
+}
+.PaymentInfo .label {
+  color: white;
+}
+.PaymentInfo .is-danger {
+  color: var(--bright-red);
+}
+.PaymentInfo .input-field {
+  width: 100%;
+  margin: 5px 0;
+}
+.PaymentInfo .input-field .label {
+  color: white;
+}
+.PaymentInfo .input-field .control {
+  width: 100%;
+  margin: 5px 0;
+}
+.PaymentInfo .input-field .control input {
+  width: 100%;
+  height: 36px;
+  padding: 0 15px;
+  border-radius: 8px;
+  border: solid 1px #e4e4e4;
+  flex: 1;
+  font-size: 16px;
+}
+.PaymentInfo button {
+  margin-top: 10px;
+  padding: 12px 18px;
+  font-size: 18px;
+  cursor: pointer;
+  background: transparent;
+  border: solid 1px white;
+  color: white;
+}

@@ -1,0 +1,114 @@
+.ShoppingCart {
+  width: 100%;
+  color: white;
+}
+.ShoppingCart .open {
+  max-width: 550px;
+}
+.ShoppingCart .open > h3 {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ShoppingCart .open > h3 > span {
+  margin-left: 10px;
+}
+.ShoppingCart .notification {
+  color: white;
+  text-align: center;
+  margin: 10px;
+}
+.ShoppingCart .cart-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  width: 100%;
+  padding-left: 0.5rem;
+}
+.ShoppingCart .cart-icon {
+  margin-bottom: 16px;
+}
+.ShoppingCart .CartTable {
+  width: 100%;
+  margin: 0 10px;
+}
+.ShoppingCart .CartTable .header {
+  display: flex;
+  flex-direction: column;
+  background: var(--pure-white);
+  border: solid 1px var(--border-color);
+  border-radius: 4px;
+  width: 100%;
+}
+.ShoppingCart .header-row {
+  display: flex;
+  height: 50px;
+  background: var(--dark-blue);
+  margin-bottom: 15px;
+}
+.ShoppingCart .header-row span {
+  flex: 1;
+  color: var(--pure-white);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 17px;
+  font-weight: 600;
+  margin-left: 15px;
+}
+.ShoppingCart .header-row span.center {
+  display: flex;
+  justify-content: center;
+}
+.ShoppingCart .flex-2 {
+  flex: 2;
+  padding-left: 10px;
+}
+.ShoppingCart .product-row {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 20px;
+  margin-top: 10px;
+  border-bottom: solid 1px var(--border-color);
+}
+.ShoppingCart .product-row span {
+  flex: 1;
+}
+.ShoppingCart .product-row span.center {
+  display: flex;
+  justify-content: center;
+}
+
+.ShoppingCart .receipt {
+  display: flex;
+  flex-direction: column;
+  background: var(--pure-white);
+  border-radius: 4px;
+  width: 100%;
+  margin-top: 10px;
+}
+.ShoppingCart .receipt span {
+  flex: 1;
+}
+.ShoppingCart .receipt span.center {
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+}
+.ShoppingCart .receipt .receipt-subtotal,
+.ShoppingCart .receipt .receipt-taxes,
+.ShoppingCart .receipt .receipt-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+.ShoppingCart .receipt .receipt-total {
+  border-top: solid 1px var(--border-color);
+}
+.ShoppingCart .receipt .label {
+  font-weight: 600;
+  padding-left: 10px;
+}
