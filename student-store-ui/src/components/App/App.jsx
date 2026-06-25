@@ -7,6 +7,8 @@ import Home from "../Home/Home";
 import ProductDetail from "../ProductDetail/ProductDetail";
 import NotFound from "../NotFound/NotFound";
 import { removeFromCart, addToCart, getQuantityOfItemInCart, getTotalItemsInCart } from "../../utils/cart";
+import { formatPrice } from "../../utils/format";
+import { API_BASE_URL } from "../../utils/api";
 import "./App.css";
 
 function App() {
@@ -23,6 +25,23 @@ function App() {
   const [error, setError] = useState(null);
   const [order, setOrder] = useState(null);
 
+  // Fetch all products from the API on mount.
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsFetching(true);
+      setError(null);
+      try {
+        const res = await axios.get(`${API_BASE_URL}/products`);
+        setProducts(res.data);
+      } catch (err) {
+        setError("Failed to load products.");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   // Toggles sidebar
   const toggleSidebar = () => setSidebarOpen((isOpen) => !isOpen);
 
@@ -37,6 +56,66 @@ function App() {
   };
 
   const handleOnCheckout = async () => {
+    // Don't check out an empty cart.
+    if (!Object.keys(cart).length) {
+      setError("Your cart is empty.");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    setError(null);
+
+    // The contract requires a numeric customer_id; derive it from the
+    // "Student ID" field, falling back to 1 when missing/non-numeric.
+    const parsedId = parseInt(userInfo.name, 10);
+    const customer_id = Number.isNaN(parsedId) ? 1 : parsedId;
+
+    // Map the cart ({ [productId]: quantity }) into the order_items shape.
+    const order_items = Object.entries(cart).map(([id, quantity]) => ({
+      product_id: Number(id),
+      quantity,
+    }));
+
+    try {
+      const res = await axios.post(`${API_BASE_URL}/orders`, {
+        customer_id,
+        order_items,
+      });
+      const orderResponse = res.data;
+
+      // Build a product lookup so receipt lines can show product names.
+      const productsById = products.reduce((acc, p) => {
+        acc[p.id] = p;
+        return acc;
+      }, {});
+
+      // Adapt the flat order response into the shape CheckoutSuccess reads
+      // (order.purchase.receipt.lines[]). Line 0 is the header.
+      setOrder({
+        ...orderResponse,
+        purchase: {
+          receipt: {
+            lines: [
+              "Thank you for your order!",
+              `Order #${orderResponse.order_id}`,
+              ...orderResponse.order_items.map((item) => {
+                const product = productsById[item.product_id];
+                const name = product ? product.name : `Product ${item.product_id}`;
+                return `${item.quantity} x ${name} — ${formatPrice(item.price * item.quantity)}`;
+              }),
+              `Total: ${formatPrice(orderResponse.total_price)}`,
+            ],
+          },
+        },
+      });
+
+      // Clear the cart on a successful order.
+      setCart({});
+    } catch (err) {
+      setError("Checkout failed. Please try again.");
+    } finally {
+      setIsCheckingOut(false);
+    }
   }
 
 
