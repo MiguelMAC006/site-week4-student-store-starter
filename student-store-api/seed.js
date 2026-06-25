@@ -41,6 +41,7 @@ async function seed() {
       const createdOrder = await prisma.order.create({
         data: {
           customer_id: order.customer_id,
+          email: order.email,
           total_price: order.total_price,
           status: order.status,
           created_at: new Date(order.created_at),

@@ -1,5 +1,5 @@
 const Order = require('../../models/order');
-const { ProductNotFoundError } = require('../../models/order');
+const { ProductNotFoundError, OrderNotFoundError } = require('../../models/order');
 
 // HTTP handlers for order endpoints. These own request/response concerns:
 // reading params/body, validation, status codes, and JSON shapes. Database
@@ -8,7 +8,7 @@ const { ProductNotFoundError } = require('../../models/order');
 // GET /orders
 async function getOrders(req, res) {
   try {
-    const orders = await Order.list();
+    const orders = await Order.list({ email: req.query.email });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
@@ -29,16 +29,40 @@ async function getOrderById(req, res) {
 // POST /orders — creates an order and its items in one transaction.
 async function createOrder(req, res) {
   try {
-    const { customer_id, status, order_items } = req.body;
+    const { customer_id, status, email, order_items } = req.body;
     if (customer_id === undefined) {
       return res.status(400).json({ error: 'Missing required field: customer_id' });
+    }
+    if (email === undefined) {
+      return res.status(400).json({ error: 'Missing required field: email' });
     }
     if (!Array.isArray(order_items) || order_items.length === 0) {
       return res.status(400).json({ error: 'order_items cannot be empty' });
     }
-    const order = await Order.create({ customer_id, status, order_items });
+    const order = await Order.create({ customer_id, status, email, order_items });
     res.status(201).json(order);
   } catch (err) {
+    if (err instanceof ProductNotFoundError) {
+      return res.status(400).json({ error: err.message });
+    }
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+}
+
+// POST /orders/:order_id/items — adds one item to an existing order and bumps
+// the order's total_price, in a single transaction (see Order.addItem).
+async function addOrderItem(req, res) {
+  try {
+    const { product_id, quantity } = req.body;
+    if (product_id === undefined) {
+      return res.status(400).json({ error: 'Missing required field: product_id' });
+    }
+    const item = await Order.addItem(Number(req.params.order_id), { product_id, quantity });
+    res.status(201).json(item);
+  } catch (err) {
+    if (err instanceof OrderNotFoundError) {
+      return res.status(404).json({ error: err.message });
+    }
     if (err instanceof ProductNotFoundError) {
       return res.status(400).json({ error: err.message });
     }
@@ -77,6 +101,7 @@ module.exports = {
   getOrders,
   getOrderById,
   createOrder,
+  addOrderItem,
   updateOrder,
   deleteOrder,
 };

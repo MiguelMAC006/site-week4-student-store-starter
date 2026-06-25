@@ -26,6 +26,7 @@ model Product {
 model Order {
   order_id    Int         @id @default(autoincrement())
   customer_id Int
+  email       String
   total_price Float       @default(0)
   status      String?     @default("pending")
   created_at  DateTime    @default(now())

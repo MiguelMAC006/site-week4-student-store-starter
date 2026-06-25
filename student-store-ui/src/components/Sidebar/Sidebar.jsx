@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom"
 import ShoppingCart from "../ShoppingCart/ShoppingCart"
-import logo from "../../assets/codepath.svg"
 import "./Sidebar.css"
 
 
@@ -12,9 +11,13 @@ function Sidebar({ cart, isOpen, products, userInfo, setUserInfo, toggleSidebar,
 
         <div className="logo">
             <Link to="/">
-              <img src={logo} alt="codepath logo" />
+              <span className="wordmark">Student Store</span>
             </Link>
         </div>
+
+        <Link to="/orders" className="past-orders-link" onClick={toggleSidebar}>
+          Past Orders
+        </Link>
 
         <span className={`toggle-button button ${isOpen ? "open" : "closed"}`} onClick={toggleSidebar}>
           <i className="material-icons md-48">arrow_forward</i>

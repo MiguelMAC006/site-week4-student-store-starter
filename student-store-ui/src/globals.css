@@ -3,8 +3,11 @@
 :root {
   --side-padding: 40px;
   --content-width: 1100px;
-  --dark-blue: #2c4047;
-  --bright-green: #00c385;
+  /* TikTok Shop theme: brand reds. Names kept for compatibility —
+     --bright-green is the primary action/brand red, --dark-blue is the
+     deeper red used for the Sidebar / cart header panels. */
+  --dark-blue: #e01e45;
+  --bright-green: #fe2c55;
   --pure-white: #fff;
   --grey-bg: #f7f7f7;
   --accent-orange: #ff9017;

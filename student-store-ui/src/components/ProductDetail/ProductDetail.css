@@ -70,7 +70,7 @@
   border: none;
   padding: 10px 15px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 999px;
   transition: background-color 0.3s;
   width: 140px;
 }

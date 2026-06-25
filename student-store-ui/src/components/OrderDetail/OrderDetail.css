@@ -1,0 +1,114 @@
+.OrderDetail {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 30px var(--side-padding) 50px;
+}
+
+.OrderDetail .back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--font-light);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.OrderDetail .back-link:hover {
+  color: var(--font-dark);
+}
+
+.OrderDetail .order-card {
+  background: var(--pure-white);
+  border: solid 1px var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.OrderDetail .order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: solid 1px var(--border-color);
+}
+
+.OrderDetail .order-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--font-dark);
+}
+
+.OrderDetail .order-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.OrderDetail .order-meta .date {
+  font-size: 14px;
+  color: var(--font-light);
+}
+
+.OrderDetail .order-meta .status {
+  font-size: 13px;
+  text-transform: capitalize;
+  color: var(--bright-green);
+  font-weight: 600;
+}
+
+.OrderDetail .items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Shared grid keeps the header row and item rows column-aligned. */
+.OrderDetail .item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 10px;
+  border-bottom: solid 1px var(--border-color);
+}
+
+.OrderDetail .item.header {
+  background: var(--grey-bg);
+  font-weight: 600;
+  color: var(--font-light);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.OrderDetail .item .col.qty,
+.OrderDetail .item .col.unit,
+.OrderDetail .item .col.line {
+  text-align: right;
+}
+
+.OrderDetail .item .col.line {
+  font-weight: 600;
+}
+
+.OrderDetail .order-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: var(--grey-bg);
+}
+
+.OrderDetail .order-foot .total-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--font-dark);
+}
+
+.OrderDetail .order-foot .total-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--bright-green);
+}

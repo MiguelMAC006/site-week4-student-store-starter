@@ -5,6 +5,8 @@
   display: flex;
   flex-direction: column;
   border: solid 1px var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
 }
 .ProductCard .media {
   height: 250px;
@@ -68,6 +70,7 @@
   height: 20px;
   border: solid 1px var(--bright-green);
   color: var(--bright-green);
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;

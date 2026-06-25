@@ -17,6 +17,7 @@ Name                 | Prisma data type
 ---------------------|--------------------------------------
 `order_id`           | `Int @id @default(autoincrement())`
 `customer_id`        | `Int`
+`email`              | `String` (required, not unique — one customer can place many orders)
 `total_price`        | `Float @default(0)`
 `status`             | `String? @default("pending")`
 `created_at`         | `DateTime @default(now())`
@@ -39,6 +40,12 @@ Name                 | Prisma data type
 - Foreign Keys: order_id, product_id
 - Cascade Behavior: When Order or Product is deleted, OrderItem should be deleted.
 
+> **Note (endpoints `GET /order-items`, `POST /orders/:order_id/items`):** No new
+> fields and no schema migration are required — both endpoints read and write the
+> existing `OrderItem` fields above. `POST /orders/:order_id/items` also bumps the
+> parent `Order.total_price` (an existing field), so it touches the `Order` model
+> too (see Transactional Flow).
+
 # API Contract
 
 ### Error Response Shape
@@ -55,11 +62,13 @@ Method   | Path                   | Request Shape | Success Response | Error Cas
 `POST`   | `/products`            | Body: `{ name: String, description: String?, price: Float, image_url: String?, category: String? }` | `201 Created` -> new product object: `{ id, name, description, price, image_url, category }`| `400` -> `{"error": "Missing required field: name"}` (or `price`)
 `PUT`    | `/products/:id`        | Body: `{ name: String?, description: String?, price: Float?, image_url: String?, category: String? }` | `200 OK` -> updated product object: `{ id, name, description, price, image_url, category }` | `404` -> `{"error": "Product not found"}`, `400` -> `{"error": "Invalid field"}`
 `DELETE` | `/products/:id`        | Route param: `id` (Int). No body. | `204 No Content` | `404` -> `{"error": "Product not found"}`
-`GET`    | `/orders`              | No body. No query params. | `200 OK` -> array of order objects: `[{ order_id, customer_id, total_price, status, created_at }, ...]` | (none specific; only the global `500`)
+`GET`    | `/orders`              | No body. Optional query param (see Query Parameters below): `?email=` | `200 OK` -> array of order objects: `[{ order_id, customer_id, email, total_price, status, created_at }, ...]` | (none specific; only the global `500`)
 `GET`    | `/orders/:order_id`    | No body. No query params. | `200 OK` -> order with items: `{ order_id, customer_id, total_price, status, created_at, order_items: [...] }`| `404` -> `{"error": "Order not found"}`
-`POST`   | `/orders`              | Body: `{ customer_id: Int, status: String?, order_items: [{ product_id: Int, quantity: Int }] }` | `201 Created` -> created order with items: `{ order_id, customer_id, total_price, status, created_at, order_items: [{ order_item_id, product_id, quantity, price }] }` | `400` -> `{"error": "order_items cannot be empty"}`, `400` -> `{"error": "Product not found for product_id: <id>"}`
+`POST`   | `/orders`              | Body: `{ customer_id: Int, email: String, status: String?, order_items: [{ product_id: Int, quantity: Int }] }` | `201 Created` -> created order with items: `{ order_id, customer_id, email, total_price, status, created_at, order_items: [{ order_item_id, product_id, quantity, price }] }` | `400` -> `{"error": "Missing required field: customer_id"}`, `400` -> `{"error": "Missing required field: email"}`, `400` -> `{"error": "order_items cannot be empty"}`, `400` -> `{"error": "Product not found for product_id: <id>"}`
 `PUT`    | `/orders/:order_id`    | Body: `{ status: String }` | `200 OK` -> updated order with items: `{ order_id, customer_id, total_price, status, created_at, order_items: [...] }` | `404` -> `{"error": "Order not found"}`
 `DELETE` | `/orders/:order_id`    | Route param: `order_id` (Int). No body. | `204 No Content` | `404` -> `{"error": "Order not found"}`
+`GET`    | `/order-items`         | No body. No query params. | `200 OK` -> array of order item objects: `[{ order_item_id, order_id, product_id, quantity, price }, ...]` | (none specific; only the global `500`)
+`POST`   | `/orders/:order_id/items` | Route param: `order_id` (Int). Body: `{ product_id: Int, quantity: Int? }` (`quantity` defaults to `1`). The client does NOT send `price` — it is read from the product server-side. | `201 Created` -> new order item object: `{ order_item_id, order_id, product_id, quantity, price }` | `400` -> `{"error": "Missing required field: product_id"}`, `404` -> `{"error": "Order not found"}`, `400` -> `{"error": "Product not found for product_id: <id>"}`
 
 ### Query Parameters — `GET /products`
 All parameters are optional and combine (filters are applied, then sorting).
@@ -79,6 +88,19 @@ Examples:
 - `GET /products?sort=price` → all products, cheapest first
 - `GET /products?category=clothing&sort=name` → clothing products, A→Z by name
 - `GET /products?category=doesnotexist` → `200 OK` with `[]`
+
+### Query Parameters — `GET /orders`
+Optional, mirrors the products filter pattern.
+
+Param   | Type     | Behavior
+--------|----------|------------------------------------------------------------------
+`email` | `String` | Case-insensitive **exact** match on the order's `email`, e.g. `?email=student101@school.edu`. An unknown email is not an error — it matches nothing, returning `200 OK` with `[]`.
+
+- **Default (no param)**: return all orders.
+- Examples:
+  - `GET /orders` → all orders
+  - `GET /orders?email=student101@school.edu` → only orders placed with that email
+  - `GET /orders?email=nobody@nowhere.com` → `200 OK` with `[]`
 
 # Transactional Flow
 
@@ -119,6 +141,38 @@ Outcomes:
   OrderItems persist) and the API returns `400` -> `{"error": "Product not found for product_id: <id>"}`.
 
 If at any point something fails, the entire transaction is rolled back and nothing is created.
+
+### `POST /orders/:order_id/items`
+This endpoint also writes to multiple tables in one logical action — it creates a new
+`OrderItem` AND increments the parent `Order`'s `total_price` — so it runs inside a single
+Prisma transaction (`prisma.$transaction`), following the same all-or-nothing principle as
+`POST /orders`.
+
+Request body:
+```json
+{
+  "product_id": 1,
+  "quantity": 2          // optional, defaults to 1
+}
+```
+Note what the client does NOT send: `order_item_id`, `order_id` (it comes from the route
+param), and `price` — `price` is read from the product in the database, never trusted from
+the client.
+
+Steps (all inside the transaction):
+1. Look up the order by `order_id`. If it doesn't exist, throw `OrderNotFoundError` →
+   the transaction rolls back and the API returns `404 {"error": "Order not found"}`.
+2. Look up the `product_id` with `tx.product.findUnique` to confirm it exists and read its
+   real `price`. If missing, throw `ProductNotFoundError` → rollback → `400 {"error":
+   "Product not found for product_id: <id>"}`.
+3. Create the `OrderItem` linked to `order_id`, storing the looked-up `price` and `quantity`.
+4. Increment the order's `total_price` by `price × quantity` (`{ increment: ... }`).
+
+Outcomes:
+- Success → `201 Created` with the new order item: `{ order_item_id, order_id, product_id,
+  quantity, price }`. The parent order's `total_price` now reflects the added item.
+- A missing order or product → the transaction rolls back: no OrderItem is created and the
+  order's `total_price` is left unchanged.
 
 # Decisions Log — Product Model
 
@@ -255,3 +309,62 @@ every `fetch` call had an authoritative target shape, so integration became a ma
 field names rather than reverse-engineering server behavior — and the two real mismatches
 (`customer_id` type and the receipt shape) were caught by reading the spec up front instead of
 discovering them as runtime failures during checkout.
+
+# Decisions Log — Order Item Endpoints (`GET /order-items`, `POST /orders/:order_id/items`)
+
+- **Where each endpoint is mounted, and why `/order-items` is top-level.** `GET /order-items`
+  is mounted at the top-level `/order-items` path (its own `orderItemRoutes.js` +
+  `orderItemController.js`, mirroring products/orders) rather than under `/orders`. Nesting a
+  literal `/orders/items` collection route alongside `/orders/:order_id` would be ambiguous with
+  the `:order_id` param, so the global collection gets its own resource path — consistent with the
+  `GET /products` / `GET /orders` pattern. By contrast, `POST /orders/:order_id/items` belongs
+  under `/orders` (in `orderRoutes.js` + `orderController.js`) because it acts on a specific
+  existing order; it's registered before `PUT /:order_id` and is unambiguous since the path
+  segment after the param is the literal `items`.
+
+- **New `OrderNotFoundError` to mirror existing error handling.** Added an `OrderNotFoundError`
+  class next to `ProductNotFoundError` in `models/order.js` and mapped it to `404` in the
+  controller via `instanceof`, matching the established domain-error pattern. (Noted in the prior
+  Order-creation log that an error-code enum might scale better than `instanceof`; kept
+  `instanceof` here for consistency with the existing code.)
+
+- **Adding an item is transactional and recomputes the total server-side.** `Order.addItem`
+  reads the product's real `price` from the DB (never trusts the client) and, in one
+  `prisma.$transaction`, creates the `OrderItem` and increments `Order.total_price` by
+  `price × quantity` using Prisma's atomic `{ increment }`. This keeps `total_price` a correct
+  rolled-up snapshot after the order already exists — the same "server owns price/total" rule
+  that `POST /orders` follows. `quantity` defaults to `1` to match the schema default.
+
+- **No schema change.** Both endpoints use only existing `OrderItem`/`Order` fields, so no Prisma
+  migration was needed (Prisma v6 toolchain, per the project's pinned `prisma@6` devDependency).
+
+# Decisions Log — Filter Orders by Email
+
+- **Email lives on `Order`, not a separate `Customer` model.** The feature filters orders by the
+  email of whoever placed them. The order needed *some* email field and none existed (orders only
+  had `customer_id: Int`). Adding `email String` directly to `Order` was the smallest change that
+  satisfies the feature and matches how the spec already treats orders as self-contained snapshots.
+  A normalized `Customer` table (unique email, FK from `Order`) would be more realistic but a much
+  larger change for no functional gain here.
+
+- **`email` is required but deliberately NOT `@unique`.** One customer can place many orders, and
+  the filter is expected to return a *list* of orders for an email. A unique constraint would cap a
+  customer at one order and make their second `POST /orders` fail — and it would defeat the filter
+  itself. Required (non-nullable) is safe because every seeded order carries an email and the DB was
+  reset/reseeded with the migration; checkout now also requires email before submitting.
+
+- **Server-side `?email=` filter mirrors the products pattern.** `Order.list({ email })` adds a
+  `where.email = { equals, mode: 'insensitive' }` clause — the same shape as `Product.list`'s
+  `name` filter — and `getOrders` passes `req.query.email` through. Case-insensitive exact match; an
+  unknown email returns `200 OK` with `[]` (not a 404/error), consistent with the products contract.
+
+- **Checkout now captures email end-to-end.** `POST /orders` requires `email` (controller guards
+  `400 "Missing required field: email"`), so the UI was wired to send it. Fixed a pre-existing bug
+  in `PaymentInfo.jsx`: the second input was labeled "Dorm Room Number" but had an email placeholder
+  and was bound to `userInfo.id` while writing to `userInfo.email` — it now labels "Email" and binds
+  `userInfo.email` correctly, and `App.jsx` sends `email` in the order body (guarding empty email).
+
+- **Migration note (Prisma v6).** Adding a required column to a table with existing rows can't be
+  applied directly, so the migration was created with `--create-only` and applied via
+  `prisma migrate reset` (drops rows → applies migration on the empty table → re-runs seed), which
+  is acceptable here because seed data is the source of truth for the dev DB.

@@ -1,0 +1,127 @@
+.PastOrders {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 30px var(--side-padding) 50px;
+}
+
+.PastOrders .title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--font-dark);
+  margin-bottom: 20px;
+}
+
+.PastOrders .filter-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.PastOrders .filter-input {
+  flex: 0 1 320px;
+  padding: 9px 14px;
+  font-size: 14px;
+  border: solid 1px var(--border-color);
+  border-radius: 999px;
+  color: var(--font-dark);
+}
+
+.PastOrders .filter-button,
+.PastOrders .clear-button {
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.PastOrders .filter-button {
+  background: var(--bright-green);
+  color: var(--pure-white);
+}
+
+.PastOrders .clear-button {
+  background: var(--grey-bg);
+  color: var(--font-light);
+  border: solid 1px var(--border-color);
+}
+
+.PastOrders .filter-button:hover,
+.PastOrders .clear-button:hover {
+  opacity: 0.85;
+}
+
+.PastOrders .empty,
+.PastOrders .error {
+  font-size: 16px;
+  color: var(--font-light);
+}
+
+.PastOrders .error {
+  color: var(--bright-red);
+}
+
+.PastOrders .order-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: solid 1px var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--pure-white);
+}
+
+.PastOrders .order-row {
+  border-bottom: solid 1px var(--border-color);
+}
+
+.PastOrders .order-row:last-child {
+  border-bottom: none;
+}
+
+/* Shared grid so the header and each linked row align column-for-column. */
+.PastOrders .order-row.header,
+.PastOrders .order-link {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 10px;
+}
+
+.PastOrders .order-row.header {
+  background: var(--grey-bg);
+  font-weight: 600;
+  color: var(--font-light);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.PastOrders .order-link {
+  text-decoration: none;
+  color: var(--font-dark);
+  transition: background-color 0.2s;
+}
+
+.PastOrders .order-link:hover {
+  background: var(--grey-bg);
+}
+
+.PastOrders .col.id {
+  font-weight: 600;
+}
+
+.PastOrders .col.total {
+  color: var(--bright-green);
+  font-weight: 600;
+}
+
+.PastOrders .col.status {
+  text-transform: capitalize;
+  color: var(--font-light);
+}

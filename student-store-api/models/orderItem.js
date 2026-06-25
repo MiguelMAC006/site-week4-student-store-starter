@@ -11,6 +11,12 @@ class OrderItem {
     });
   }
 
+  // GET /order-items returns every order item in the database (bare rows, no
+  // includes), mirroring Order.list().
+  static list() {
+    return prisma.orderItem.findMany();
+  }
+
   static getById(order_item_id) {
     return prisma.orderItem.findUnique({ where: { order_item_id } });
   }

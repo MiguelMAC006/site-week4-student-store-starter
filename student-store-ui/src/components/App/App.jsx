@@ -5,6 +5,8 @@ import SubNavbar from "../SubNavbar/SubNavbar";
 import Sidebar from "../Sidebar/Sidebar";
 import Home from "../Home/Home";
 import ProductDetail from "../ProductDetail/ProductDetail";
+import PastOrders from "../PastOrders/PastOrders";
+import OrderDetail from "../OrderDetail/OrderDetail";
 import NotFound from "../NotFound/NotFound";
 import { removeFromCart, addToCart, getQuantityOfItemInCart, getTotalItemsInCart } from "../../utils/cart";
 import { formatPrice } from "../../utils/format";
@@ -17,7 +19,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [userInfo, setUserInfo] = useState({ name: "", dorm_number: ""});
+  const [userInfo, setUserInfo] = useState({ name: "", email: "", dorm_number: ""});
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({});
   const [isFetching, setIsFetching] = useState(false);
@@ -62,6 +64,12 @@ function App() {
       return;
     }
 
+    // Email is required so the order can be looked up / filtered later.
+    if (!userInfo.email) {
+      setError("Please enter your email.");
+      return;
+    }
+
     setIsCheckingOut(true);
     setError(null);
 
@@ -79,6 +87,7 @@ function App() {
     try {
       const res = await axios.post(`${API_BASE_URL}/orders`, {
         customer_id,
+        email: userInfo.email,
         order_items,
       });
       const orderResponse = res.data;
@@ -163,6 +172,8 @@ function App() {
                 />
               }
             />
+            <Route path="/orders" element={<PastOrders />} />
+            <Route path="/orders/:order_id" element={<OrderDetail />} />
             <Route
               path="/:productId"
               element={

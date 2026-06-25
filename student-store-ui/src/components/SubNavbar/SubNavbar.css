@@ -33,7 +33,7 @@
   height: 40px;
   padding: 0 15px;
   border-radius: 8px 0px 0px 8px;
-  border: solid 1px #e4e4e4;
+  border: solid 1px var(--border-color);
   flex: 1;
   font-size: 16px;
 }
@@ -43,6 +43,7 @@
   background: var(--bright-green);
   color: white;
   fill: white;
+  border-radius: 0 8px 8px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -79,6 +80,7 @@
   background: var(--bright-green);
   width: 170px;
   height: 40px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;

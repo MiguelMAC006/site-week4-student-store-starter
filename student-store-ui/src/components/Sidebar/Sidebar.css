@@ -27,6 +27,21 @@
   align-items: center;
   width: 100%;
 }
+.Sidebar .logo {
+  margin-top: 16px;
+}
+.Sidebar .logo .wordmark {
+  color: white;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+/* Collapsed sidebar is only 60px wide — hide the wordmark so it doesn't overflow. */
+.Sidebar.closed .logo .wordmark {
+  display: none;
+}
+
 .Sidebar .toggle-button {
   margin-top: 20px;
   transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -43,4 +58,26 @@
   margin-right: 10px;
   cursor: pointer;
   color: white;
+}
+
+.Sidebar .past-orders-link {
+  margin-top: 16px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 14px;
+  border: solid 1px white;
+  border-radius: 999px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.Sidebar .past-orders-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* The collapsed sidebar is only 60px wide — hide the link until it's open. */
+.Sidebar.closed .past-orders-link {
+  display: none;
 }

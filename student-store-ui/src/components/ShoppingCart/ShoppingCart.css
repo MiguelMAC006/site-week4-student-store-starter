@@ -38,8 +38,9 @@
   display: flex;
   flex-direction: column;
   background: var(--pure-white);
+  color: var(--font-dark);
   border: solid 1px var(--border-color);
-  border-radius: 4px;
+  border-radius: 8px;
   width: 100%;
 }
 .ShoppingCart .header-row {
@@ -85,9 +86,11 @@
   display: flex;
   flex-direction: column;
   background: var(--pure-white);
-  border-radius: 4px;
+  color: var(--font-dark);
+  border-radius: 8px;
   width: 100%;
   margin-top: 10px;
+  padding: 10px 12px;
 }
 .ShoppingCart .receipt span {
   flex: 1;
