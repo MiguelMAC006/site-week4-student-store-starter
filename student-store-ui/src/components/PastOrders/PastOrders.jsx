@@ -81,6 +81,7 @@ function PastOrders() {
           <li className="order-row header">
             <span className="col id">Order ID</span>
             <span className="col date">Date</span>
+            <span className="col email">Email</span>
             <span className="col total">Total</span>
             <span className="col status">Status</span>
           </li>
@@ -89,6 +90,7 @@ function PastOrders() {
               <Link to={`/orders/${order.order_id}`} className="order-link">
                 <span className="col id">#{order.order_id}</span>
                 <span className="col date">{formatDate(order.created_at)}</span>
+                <span className="col email">{order.email}</span>
                 <span className="col total">{formatPrice(order.total_price)}</span>
                 <span className="col status">{order.status}</span>
               </Link>

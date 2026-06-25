@@ -87,10 +87,17 @@
 .PastOrders .order-row.header,
 .PastOrders .order-link {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr;
+  grid-template-columns: 0.7fr 1.3fr 2fr 1fr 1fr;
   align-items: center;
   padding: 14px 20px;
   gap: 10px;
+}
+
+/* Keep long email addresses from breaking the row layout. */
+.PastOrders .col.email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .PastOrders .order-row.header {
