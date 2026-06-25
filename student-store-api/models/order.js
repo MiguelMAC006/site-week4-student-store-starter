@@ -36,7 +36,9 @@ class Order {
   static getById(order_id) {
     return prisma.order.findUnique({
       where: { order_id },
-      include: { order_items: true },
+      // Nest the related product into each item so the detail page can show
+      // product names (not just product_id).
+      include: { order_items: { include: { product: true } } },
     });
   }
 

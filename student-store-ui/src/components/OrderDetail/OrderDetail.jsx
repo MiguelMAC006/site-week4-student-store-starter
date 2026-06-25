@@ -59,7 +59,7 @@ function OrderDetail() {
           </li>
           {order.order_items.map((item) => (
             <li key={item.order_item_id} className="item">
-              <span className="col product">Product #{item.product_id}</span>
+              <span className="col product">{item.product?.name || `Product #${item.product_id}`}</span>
               <span className="col qty">{item.quantity}</span>
               <span className="col unit">{formatPrice(item.price)}</span>
               <span className="col line">{formatPrice(item.price * item.quantity)}</span>
