@@ -1,9 +1,19 @@
+import { useNavigate } from "react-router-dom"
 import "./SubNavbar.css"
 
 function SubNavbar({ activeCategory, setActiveCategory, searchInputValue, handleOnSearchInputChange }) {
 
+  const navigate = useNavigate();
 
   const categories = ["All Categories", "Accessories", "Apparel", "Books", "Snacks", "Supplies"];
+
+  // Selecting a category filters the product grid, which only lives on the home
+  // route — so navigate home as well (otherwise clicking a tab on e.g. the Past
+  // Orders page silently sets state with nothing visible).
+  const handleSelectCategory = (cat) => {
+    setActiveCategory(cat);
+    navigate("/");
+  };
 
   return (
     <nav className="SubNavbar">
@@ -27,7 +37,7 @@ function SubNavbar({ activeCategory, setActiveCategory, searchInputValue, handle
           <ul className={`category-menu`}>
             {categories.map((cat) => (
               <li className={activeCategory === cat ? "is-active" : ""} key={cat}>
-                <button onClick={() => setActiveCategory(cat)}>{cat}</button>
+                <button onClick={() => handleSelectCategory(cat)}>{cat}</button>
               </li>
             ))}
           </ul>

@@ -7,10 +7,12 @@ async function seed() {
   try {
     console.log('🌱 Seeding database...\n')
 
-    // Clear existing data (in order due to relations)
-    await prisma.orderItem.deleteMany()
-    await prisma.order.deleteMany()
-    await prisma.product.deleteMany()
+    // Clear existing data AND reset the autoincrement counters so ids start at
+    // 1 on every seed (plain deleteMany leaves the sequence climbing). CASCADE
+    // covers the FK relations between OrderItem/Order/Product.
+    await prisma.$executeRawUnsafe(
+      'TRUNCATE TABLE "OrderItem", "Order", "Product" RESTART IDENTITY CASCADE;'
+    )
 
     // Load JSON data (data/ lives alongside this script)
     const productsData = JSON.parse(
