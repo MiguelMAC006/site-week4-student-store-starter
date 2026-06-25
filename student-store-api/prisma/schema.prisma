@@ -12,3 +12,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  image_url   String?     @default("https://www.fairfaxbar.org/global_graphics/default-store-350x350.jpg")
+  category    String?     @default("uncategorized")
+  order_items OrderItem[]
+}
+
+model Order {
+  order_id    Int         @id @default(autoincrement())
+  customer_id Int
+  total_price Float       @default(0)
+  status      String?     @default("pending")
+  created_at  DateTime    @default(now())
+  order_items OrderItem[]
+}
+
+model OrderItem {
+  order_item_id Int     @id @default(autoincrement())
+  order_id      Int
+  order         Order   @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  product_id    Int
+  product       Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  quantity      Int     @default(1)
+  price         Float // price at time of purchase (snapshot), set by server
+}
