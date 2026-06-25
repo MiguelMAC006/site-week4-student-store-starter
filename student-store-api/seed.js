@@ -38,6 +38,13 @@ async function seed() {
       })
     }
 
+    // Inserting products with explicit ids doesn't advance Postgres's
+    // autoincrement sequence, so a later POST /products would reuse an existing
+    // id and fail. Resync the sequence to MAX(id) so new inserts continue cleanly.
+    await prisma.$executeRawUnsafe(
+      `SELECT setval('"Product_id_seq"', (SELECT MAX(id) FROM "Product"))`
+    )
+
     // Seed orders and items
     for (const order of ordersData.orders) {
       const createdOrder = await prisma.order.create({
