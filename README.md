@@ -98,7 +98,7 @@ Deployed Application: [Student Store Deployed Site](https://student-store-fronte
 
 ### Walkthrough Video
 
-[![Watch the walkthrough](https://cdn.loom.com/sessions/thumbnails/70eea5d1de144b489d27360faddb73ed-with-play.gif)](https://www.loom.com/share/70eea5d1de144b489d27360faddb73ed)
+[Watch the walkthrough](https://www.loom.com/share/70eea5d1de144b489d27360faddb73ed)
 
 ### Reflection
 
